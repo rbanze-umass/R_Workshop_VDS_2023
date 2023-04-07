@@ -1,0 +1,83 @@
+---
+title: "R workshop"
+format: html
+editor: visual
+---
+
+```{r}
+# This is a comment. Comments in R start with a "#" symbol.
+
+# Assign a value to a variable
+x <- 10
+
+# Perform some basic arithmetic operations
+y <- x * 2
+z <- x + y
+
+# Print the value of a variable to the console
+print(z)
+print(y+z)
+```
+
+```{r}
+# Define a function
+add_two <- function(a, b) {
+  return(a + b)
+}
+
+# Call the function and print the result
+result <- add_two(5, 3)
+print(result)
+```
+
+```{r}
+# Define a for loop
+for (i in 1:5) {
+  print(i)
+}
+```
+
+```{r}
+# Define an if statement
+if (x > y) {
+  print("x is greater than y")
+} else {
+  print("x is not greater than y")
+}
+```
+
+Comments: In R, comments are indicated by a "\#" symbol. Anything following a "\#" symbol on a line is treated as a comment and is ignored by the R interpreter.
+
+Data types: R has a number of built-in data types, including character strings, integers, and floating-point numbers. R also has a special data type called a "vector" that can be used to store a sequence of values.
+
+Variables: Variables are used to store values in R. Variables are memory locations that store values during the execution of a computer program. To define a variable in R, we use the reverse-arrow(\<-) operator.
+
+Operators: R has a number of operators that can be used to perform calculations and compare values. These include arithmetic operators such as "+", "-", "\*", and"/", and logical operators such as"==" (equal to) and "!=" (not equal to).
+
+Functions: Functions are used to perform specific tasks in R. To call a function, you use the function name followed by parentheses.
+
+```{r}
+df <- read_csv("hotel_bookings.csv")
+df
+```
+
+```{r}
+summary(df)
+```
+
+```{r}
+str(df)
+```
+
+```{r}
+df %>%
+  group_by(hotel) %>%
+  count()
+```
+
+```{r}
+df %>%
+  group_by(hotel) %>%
+  count() %>%
+  rename("Number of Bookings" = "n")
+```

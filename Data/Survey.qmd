@@ -1,0 +1,63 @@
+---
+title: "Survey"
+format: 
+  html:
+    code-fold: true
+editor: visual
+---
+
+### Loading Library
+
+```{r, warning = FALSE, message = FALSE}
+
+if (!require(pacman)) install.packages("pacman")
+
+pacman::p_load("tidyverse", "ggplot2", "plotly")
+```
+
+### Loading in the dataset
+
+```{r, message=FALSE, warning = FALSE}
+df <- read_csv("R Workshop Survey.csv")
+
+head(df)
+```
+
+### Viz 1
+
+```{r}
+#| label: fig-exercise
+#| fig-cap:  Frequency count of Each Category 
+#| warning: false
+A <- df %>%
+  group_by(`How often do you exercise?`) %>%
+  count() %>%
+  ggplot(aes(y = n, x = `How often do you exercise?`, fill = `How often do you exercise?`)) + 
+  geom_bar(position = "dodge", stat = "identity") +
+  ggtitle("How often do you exercise?") +
+  xlab("Frequency on weekly basis") +
+  ylab("Count") +
+  theme_classic() +
+  guides(fill = "none")
+ggplotly(A)
+```
+
+### Viz 3
+
+```{r}
+#| label: fig-pie
+#| fig-cap: Showing percentage of people using a particular transport
+#| warning: false
+
+df %>% 
+  group_by(`What is your primary mode of transportation to work?`) %>%
+  count() %>% 
+  ggplot(aes(x = "", y = n, fill = as.factor(`What is your primary mode of transportation to work?`))) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  labs(title = "What is your primary mode of transportation to work?") +
+  scale_fill_viridis_d() +
+  theme_void() +
+  geom_text(aes(label = paste0(round((n/sum(n))*100), "%")), position = position_stack(vjust = 0.5)) +
+  guides(fill = guide_legend(title = "Transportation way"))
+```

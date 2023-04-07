@@ -1,0 +1,139 @@
+---
+title: "Visualizations"
+format: 
+  html:
+    code-fold: true
+editor: visual
+author: Ravina Banze
+---
+
+### Loading libraries
+
+```{r, warning=FALSE, message=FALSE}
+
+if(!require(pacman)) install.packages("pacman")
+
+pacman::p_load(
+  #Data Handling
+  "tidyverse",
+  #Data Source
+  "gapminder",
+  #Viz libraries
+  "ggplot2", "gganimate", "plotly", "hrbrthemes", "gifski"
+  )
+```
+
+### Viz 1
+
+With @fig-life_gdp we explore `relplot` (relation plot) by using scatter chart to explore how the relationship between `GDP` and `Life Expetancy` has changed over the years.
+
+```{r}
+#| label: fig-life_gdp
+#| fig-cap: Relationship between life expectancy and GDP from the year 1952 to 2007
+#| warning: false
+
+# Make a ggplot, but add frame=year: one image per year
+myPlot <- ggplot(
+  gapminder, 
+  aes(gdpPercap, lifeExp, size = pop, color = continent)
+  ) +
+  geom_point() +
+  scale_x_log10() +
+  theme_bw() +
+  # gganimate specific bits:
+  labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'life expectancy') +
+  transition_time(year) +
+  ease_aes('linear')
+
+# Save as gif:
+gganimate::animate(
+  myPlot,
+  duration = 5, 
+  fps = 20,
+  width = 600,
+  height = 300,
+  renderer = gifski_renderer()
+  )
+anim_save("271-ggplot2-animated-gif-chart-with-gganimate1.gif")
+```
+
+### Viz 2
+
+We can also plot using 3 axes (@fig-volcano ) for datasets where all three points (x, y and z) represent only one value.
+
+```{r}
+#| label: fig-volcano
+#| fig-cap: Maunga Whau (Mt Eden) is one of about 50 volcanos in the Auckland volcanic field. This data set gives topographic information for Maunga Whau on a 10m by 10m grid.
+#| warning: false
+
+# Data: volcano is provided by plotly
+
+# Plot
+p <- plot_ly(z = volcano, type = "surface")
+p 
+```
+
+### Viz 3
+
+Here is an example showing the distribution of the night price of AirBnB appartements in the south of France. Price range is divided per 10 euros interval. For example, there are slightly less than 750 appartements with a night price between 100 and 110 euros:
+
+```{r}
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv", header=TRUE)
+
+summary(data)
+```
+
+source: [holtzy/data_to_viz](https://github.com/holtzy/data_to_viz.git "https://github.com/holtzy/data_to_viz.git")
+
+Now on the basis of this we can plot a histogram to see how often a particular price occurs in the dataset (while ignoring the outliers) [@fig-hist].
+
+```{r}
+#| label: fig-hist
+#| fig-cap: Frequency count to check bnbs avaiable at different price points in South of France
+#| warning: false
+
+# Plotting the dataset
+p <- data %>%
+  filter( (price >= 69) & (price <= 172) ) %>% # Let's keep it between the 1st and                                                # 3rd quartile 
+  ggplot( aes(x=price)) +
+    geom_histogram( binwidth=10, fill="#69b3a2", color="#e9ecef", alpha=0.9) +
+    ggtitle("Bin size = 10") +
+    theme_ipsum() +
+    theme(
+      plot.title = element_text(size=15)
+    )
+ggplotly(p)
+```
+
+### Viz 4
+
+Pie Chart is also something which is very useful to show per cent of the whole. In the visualization below (@fig-pie ) we create a Mock Dataset with labels: `Massachusetts`, `New york`, `California`, and `Texas`.
+
+```{r}
+#| label: fig-pie
+#| fig-cap: Pie Chart showing percentage of each category
+#| warning: false
+
+#Creating the Dataset
+x <- c(59, 62, 58, 282)
+labels <-  c("Massachusetts","New York","Calfornia","Texas")
+
+#Calculation Percentage
+piepercent<- round(100*x/sum(x), 1) # Round up is a good practice as it helps in                                       # keeping the significance level constant                                          # throughout a project
+
+# Plotting the chart
+pie(
+  x,
+  labels = piepercent,
+  main = "City pie chart",
+  col = rainbow(length(x))
+  )
+# Specifying the legend
+legend(
+  "topright", 
+  c("Massachusetts","New York","Calfornia","Texas"),
+  cex = 0.8,
+  fill = rainbow(length(x))
+  )
+```
